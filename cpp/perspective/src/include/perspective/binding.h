@@ -20,6 +20,7 @@
 #include <perspective/sym_table.h>
 #include <perspective/table.h>
 #include <perspective/view.h>
+#include <perspective/view_config.h>
 #include <random>
 #include <cmath>
 #include <sstream>
@@ -276,6 +277,10 @@ namespace binding {
      * @return std::shared_ptr<t_pool>
      */
     std::shared_ptr<t_pool> make_pool();
+
+    template <typename T>
+    t_view_config make_view_config2(
+        const t_schema& schema, std::string separator, T date_parser, T config);
 
     /**
      * @brief Extracts and validates the config from the binding language,
