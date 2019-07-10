@@ -161,7 +161,7 @@ nan_compare(t_sorttype order, const t_tscalar& a, const t_tscalar& b) {
     bool b_nan = std::isnan(b_dbl);
 
     rval.m_active = a_nan || b_nan;
-
+    
     if (!rval.m_active)
         return rval;
 

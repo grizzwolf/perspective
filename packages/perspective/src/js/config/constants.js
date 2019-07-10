@@ -63,7 +63,7 @@ export const TYPE_AGGREGATES = {
 
 const BOOLEAN_FILTERS = ["&", "|", "==", "!=", "or", "and"];
 
-const NUMBER_FILTERS = ["<", ">", "==", "<=", ">=", "!=", "is nan", "is not nan"];
+const NUMBER_FILTERS = ["<", ">", "==", "<=", ">=", "!="];
 
 const STRING_FILTERS = ["==", "contains", "!=", "in", "not in", "begins with", "ends with"];
 
