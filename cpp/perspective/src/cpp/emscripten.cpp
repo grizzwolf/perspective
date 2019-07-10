@@ -18,6 +18,19 @@ namespace binding {
      *
      * Utility
      */
+
+    template <typename T>
+    std::vector<T>
+    make_vector() {
+        return std::vector<T>{};
+    }
+
+    template <typename K, typename V>
+    std::map<K, V>
+    make_map() {
+        return std::map<K, V>{};
+    }
+
     template <>
     bool
     has_value(t_val item) {
@@ -1572,12 +1585,95 @@ namespace binding {
         return view_config;
     }
 
+    std::tuple<std::string, std::string, t_tscalar>
+    make_filter_term(const t_schema& schema, t_val date_parser, std::vector<t_val> filter) {
+        auto _is_valid_filter = [date_parser, filter](t_dtype type) {
+            if (type == DTYPE_DATE || type == DTYPE_TIME) {
+                t_val parsed_date = date_parser.call<t_val>("parse", filter[2]);
+                return has_value(parsed_date);
+            } else {
+                return has_value(filter[2]);
+            }
+        };
+
+        std::string col = filter[0].as<std::string>();
+        std::string comp_str = filter[1].as<std::string>();
+        t_filter_op comp = str_to_filter_op(comp_str);
+
+        // check validity and if_date
+        t_dtype col_type = schema.get_dtype(col);
+        bool is_valid = _is_valid_filter(col_type);
+
+        if (!is_valid) {
+            return {};
+        }
+
+        t_tscalar term;
+        switch (comp) {
+            case FILTER_OP_NOT_IN:
+            case FILTER_OP_IN: {
+                // TODO: support multiple filter terms
+                PSP_COMPLAIN_AND_ABORT("not supported");
+            } break;
+            default: {
+                switch (col_type) {
+                    case DTYPE_INT32: {
+                        term = mktscalar(filter[2].as<std::int32_t>());
+                    } break;
+                    case DTYPE_INT64:
+                    case DTYPE_FLOAT64: {
+                        term = mktscalar(filter[2].as<double>());
+                    } break;
+                    case DTYPE_BOOL: {
+                        term = mktscalar(filter[2].as<bool>());
+                    } break;
+                    case DTYPE_DATE: {
+                        t_val parsed_date = date_parser.call<t_val>("parse", filter[2]);
+                        term = mktscalar(jsdate_to_t_date(parsed_date));
+                    } break;
+                    case DTYPE_TIME: {
+                        t_val parsed_date = date_parser.call<t_val>("parse", filter[2]);
+                        term = mktscalar(t_time(static_cast<std::int64_t>(
+                            parsed_date.call<t_val>("getTime").as<double>())));
+                    } break;
+                    default: {
+                        term
+                            = mktscalar(get_interned_cstr(filter[2].as<std::string>().c_str()));
+                    }
+                }
+            }
+        }
+
+        return std::make_tuple(col, comp_str, term);
+    }
+
+    t_view_config
+    make_vc(const t_schema& schema, t_val date_parser, t_val vc) {
+        auto row_pivots = vc.call<std::vector<std::string>>("get_row_pivots");
+        auto column_pivots = vc.call<std::vector<std::string>>("get_column_pivots");
+        auto aggregates = vc.call<std::map<std::string, std::string>>("get_aggregates");
+        auto columns = vc.call<std::vector<std::string>>("get_columns");
+        auto sort = vc.call<std::vector<std::vector<std::string>>>("get_sort");
+
+        t_view_config config(row_pivots, column_pivots, aggregates, columns, {}, sort);
+
+        // construct filters with filter terms
+        auto filter = vc.call<std::vector<std::vector<t_val>>>("get_filter");
+        for (auto f : filter) {
+            config.add_filter_term(make_filter_term(schema, date_parser, f));
+        }
+
+        return config;
+    }
+
     template <>
     std::shared_ptr<View<t_ctx0>>
     make_view_zero(std::shared_ptr<Table> table, std::string name, std::string separator,
-        t_val config, t_val date_parser) {
+        t_val config, t_val j_view_config, t_val date_parser) {
         auto schema = table->get_schema();
         t_config view_config = make_view_config<t_val>(schema, separator, date_parser, config);
+        t_view_config vc = make_vc(schema, date_parser, j_view_config);
+        std::cout << vc << std::endl;
 
         auto col_names = view_config.get_column_names();
         auto filter_op = view_config.get_combiner();
@@ -1594,9 +1690,11 @@ namespace binding {
     template <>
     std::shared_ptr<View<t_ctx1>>
     make_view_one(std::shared_ptr<Table> table, std::string name, std::string separator,
-        t_val config, t_val date_parser) {
+        t_val config, t_val j_view_config, t_val date_parser) {
         auto schema = table->get_schema();
         t_config view_config = make_view_config<t_val>(schema, separator, date_parser, config);
+        t_view_config vc = make_vc(schema, date_parser, j_view_config);
+        std::cout << vc << std::endl;
 
         auto aggregates = view_config.get_aggregates();
         auto row_pivots = view_config.get_row_pivots();
@@ -1621,9 +1719,11 @@ namespace binding {
     template <>
     std::shared_ptr<View<t_ctx2>>
     make_view_two(std::shared_ptr<Table> table, std::string name, std::string separator,
-        t_val config, t_val date_parser) {
+        t_val config, t_val j_view_config, t_val date_parser) {
         auto schema = table->get_schema();
         t_config view_config = make_view_config<t_val>(schema, separator, date_parser, config);
+        t_view_config vc = make_vc(schema, date_parser, j_view_config);
+        std::cout << vc << std::endl;
 
         bool column_only = view_config.is_column_only();
         auto column_names = view_config.get_column_names();
@@ -1913,9 +2013,10 @@ EMSCRIPTEN_BINDINGS(perspective) {
      */
     class_<t_view_config>("t_view_config")
         .constructor<std::vector<std::string>, std::vector<std::string>,
-            std::vector<std::string>, std::map<std::string, std::string>,
+            std::map<std::string, std::string>, std::vector<std::string>,
             std::vector<std::tuple<std::string, std::string, t_tscalar>>,
-            std::vector<std::vector<std::string>>, bool>();
+            std::vector<std::vector<std::string>>>()
+        .function("add_filter_term", &t_view_config::add_filter_term);
 
     /******************************************************************************
      *
@@ -2050,8 +2151,10 @@ EMSCRIPTEN_BINDINGS(perspective) {
     register_vector<t_tscalar>("std::vector<t_tscalar>");
     register_vector<t_updctx>("std::vector<t_updctx>");
     register_vector<t_uindex>("std::vector<t_uindex>");
+    register_vector<t_val>("std::vector<t_val>");
     register_vector<std::vector<t_tscalar>>("std::vector<std::vector<t_tscalar>>");
     register_vector<std::vector<std::string>>("std::vector<std::vector<std::string>>");
+    register_vector<std::vector<t_val>>("std::vector<std::vector<t_val>>");
 
     /******************************************************************************
      *
@@ -2100,7 +2203,17 @@ EMSCRIPTEN_BINDINGS(perspective) {
 
     /******************************************************************************
      *
-     * assorted functions
+     * Construct data structures
+     */
+    function("make_string_vector", &make_vector<std::string>);
+    function("make_val_vector", &make_vector<t_val>);
+    function("make_2d_string_vector", &make_vector<std::vector<std::string>>);
+    function("make_2d_val_vector", &make_vector<std::vector<t_val>>);
+    function("make_string_map", &make_map<std::string, std::string>);
+
+    /******************************************************************************
+     *
+     * Perspective functions
      */
     function("make_table", &make_table<t_val>);
     function("make_pool", &make_pool);

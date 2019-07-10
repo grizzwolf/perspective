@@ -312,7 +312,7 @@ namespace binding {
      */
     template <typename T>
     std::shared_ptr<View<t_ctx0>> make_view_zero(std::shared_ptr<Table> table, std::string name,
-        std::string separator, T config, T date_parser);
+        std::string separator, T config, T j_view_config, T date_parser);
 
     /**
      * @brief Create a new one-sided view.
@@ -329,7 +329,7 @@ namespace binding {
      */
     template <typename T>
     std::shared_ptr<View<t_ctx1>> make_view_one(std::shared_ptr<Table> table, std::string name,
-        std::string separator, T config, T date_parser);
+        std::string separator, T config, T j_view_config, T date_parser);
 
     /**
      * @brief Create a new two-sided view.
@@ -347,7 +347,7 @@ namespace binding {
      */
     template <typename T>
     std::shared_ptr<View<t_ctx2>> make_view_two(std::shared_ptr<Table> table, std::string name,
-        std::string separator, T config, T date_parser);
+        std::string separator, T config, T j_view_config, T date_parser);
 
     /**
      * @brief Create a new zero-sided context.
