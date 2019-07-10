@@ -23,7 +23,6 @@ struct t_view_config {
         std::vector<std::vector<std::string>> sort, bool column_only);
 
     void add_filter_term(std::string col_name, std::string filter_op, t_tscalar filter_term);
-    t_config to_t_config();
 
     std::vector<std::string> m_row_pivots;
     std::vector<std::string> m_column_pivots;

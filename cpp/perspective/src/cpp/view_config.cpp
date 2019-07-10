@@ -31,9 +31,4 @@ t_view_config::add_filter_term(
     m_filter.push_back(term);
 }
 
-t_config
-t_view_config::to_t_config() {
-    return t_config();
-}
-
 } // namespace perspective
