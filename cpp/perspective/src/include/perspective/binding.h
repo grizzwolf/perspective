@@ -278,9 +278,18 @@ namespace binding {
      */
     std::shared_ptr<t_pool> make_pool();
 
+    /**
+     * @brief Create a filter by parsing the filter term from the binding language.
+     *
+     * @tparam T
+     * @param schema
+     * @param date_parser
+     * @param filter
+     * @return std::tuple<std::string, std::string, std::vector<t_tscalar>>
+     */
     template <typename T>
-    t_view_config make_view_config2(
-        const t_schema& schema, std::string separator, T date_parser, T config);
+    std::tuple<std::string, std::string, std::vector<t_tscalar>> make_filter_term(
+        const t_schema& schema, T date_parser, std::vector<T> filter);
 
     /**
      * @brief Extracts and validates the config from the binding language,
@@ -294,8 +303,20 @@ namespace binding {
      * @return t_config
      */
     template <typename T>
-    t_config make_view_config(
+    t_config make_config(
         const t_schema& schema, std::string separator, T date_parser, T config);
+
+    /**
+     * @brief Create a `t_view_config` object from the binding language's `view_config` object.
+     *
+     * @tparam T
+     * @param schema
+     * @param date_parser
+     * @param config
+     * @return t_config
+     */
+    template <typename T>
+    t_view_config make_view_config(const t_schema& schema, T date_parser, T config);
 
     /**
      * @brief Create a new zero-sided view.

@@ -863,6 +863,7 @@ export default function(Module) {
         this.columns = config.columns;
         this.filter = config.filter || [];
         this.sort = config.sort || [];
+        this.filter_op = config.filter_op || "and";
     }
 
     /**
