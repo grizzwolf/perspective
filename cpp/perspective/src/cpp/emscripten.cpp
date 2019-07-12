@@ -182,7 +182,7 @@ namespace binding {
 
             agg_index = _get_aggregate_index(columns, column);
 
-            svec.push_back(t_sortspec(agg_index, sorttype));
+            svec.push_back(t_sortspec(column, agg_index, sorttype));
         }
         return svec;
     }
@@ -1677,23 +1677,22 @@ namespace binding {
             view_config.add_filter_term(make_filter_term(schema, date_parser, f));
         }
 
+        view_config.init(schema);
+
         return view_config;
     }
 
     template <>
     std::shared_ptr<View<t_ctx0>>
     make_view_zero(std::shared_ptr<Table> table, std::string name, std::string separator,
-        t_val config, t_val j_view_config, t_val date_parser) {
+        t_val j_view_config, t_val date_parser) {
         auto schema = table->get_schema();
         t_view_config view_config = make_view_config<t_val>(schema, date_parser, j_view_config);
 
-        // need aggregates to be calculated for sorting FIXME: we shouldn't have to do this
-        auto aggregates = view_config.get_aggregates(schema);
-        auto aggregate_names = _get_aggregate_names(aggregates);
         auto columns = view_config.get_columns();
         auto filter_op = view_config.get_filter_op();
-        auto filter = view_config.get_filter();
-        auto sort = std::get<0>(view_config.get_sort(aggregate_names));
+        auto filter = view_config.get_fterm();
+        auto sort = view_config.get_sortspec();
 
         auto ctx = make_context_zero(table, schema, filter_op, columns, filter, sort, name);
 

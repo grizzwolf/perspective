@@ -257,7 +257,7 @@ export default function(Module) {
         this.view_config = view_config || new view_config();
 
         if (sides === 0) {
-            this._View = __MODULE__.make_view_zero(table._Table, name, defaults.COLUMN_SEPARATOR_STRING, this.config, this.view_config, this.date_parser);
+            this._View = __MODULE__.make_view_zero(table._Table, name, defaults.COLUMN_SEPARATOR_STRING, this.view_config, this.date_parser);
         } else if (sides === 1) {
             this._View = __MODULE__.make_view_one(table._Table, name, defaults.COLUMN_SEPARATOR_STRING, this.config, this.view_config, this.date_parser);
         } else if (sides === 2) {

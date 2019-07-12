@@ -22,17 +22,12 @@ View<CTX_T>::View(std::shared_ptr<Table> table, std::shared_ptr<CTX_T> ctx, std:
     , m_col_offset(0)
     , m_view_config(view_config) {
 
-    auto schema = table->get_schema(); // FIXME: less dependencies
-    m_aggregates = m_view_config.get_aggregates(schema);
-    auto aggregate_names = m_view_config.get_aggregate_names(
-        m_aggregates); // FIXME: we should not have to do this
-
     m_row_pivots = m_view_config.get_row_pivots();
     m_column_pivots = m_view_config.get_column_pivots();
+    m_aggregates = m_view_config.get_aggspecs();
     m_columns = m_view_config.get_columns();
-    m_filter = m_view_config.get_filter();
-    m_sort = std::get<0>(
-        m_view_config.get_sort(aggregate_names)); // FIXME: we should not have to do this
+    m_filter = m_view_config.get_fterm();
+    m_sort = m_view_config.get_sortspec();
 
     // configure data window for column-only rows
     is_column_only() ? m_row_offset = 1 : m_row_offset = 0;
