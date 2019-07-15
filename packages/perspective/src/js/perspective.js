@@ -1016,6 +1016,9 @@ export default function(Module) {
     };
 
     table.prototype._is_valid_filter = function(filter) {
+        if (filter[1] === perspective.FILTER_OPERATORS.isNull || filter[1] === perspective.FILTER_OPERATORS.isNotNull) {
+            return true;
+        }
         const schema = this._schema();
         const isDateFilter = this._is_date_filter(schema);
         const value = isDateFilter(filter[0]) ? new DateParser().parse(filter[2]) : filter[2];

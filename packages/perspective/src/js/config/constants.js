@@ -61,13 +61,63 @@ export const TYPE_AGGREGATES = {
     date: STRING_AGGREGATES
 };
 
-const BOOLEAN_FILTERS = ["&", "|", "==", "!=", "or", "and"];
+export const FILTER_OPERATORS = {
+    lessThan: "<",
+    greaterThan: ">",
+    equals: "==",
+    doesNotEqual: "==",
+    lessThanOrEquals: "<=",
+    greaterThanOrEquals: ">=",
+    doesNotEqual: "!=",
+    isNull: "is null",
+    isNotNull: "is not null",
+    isIn: "in",
+    isNotIn: "not in",
+    contains: "contains",
+    bitwiseAnd: "&",
+    bitwiseOr: "|",
+    and: "and",
+    or: "or",
+}
 
-const NUMBER_FILTERS = ["<", ">", "==", "<=", ">=", "!="];
+const BOOLEAN_FILTERS = [
+    FILTER_OPERATORS.bitwiseAnd,
+    FILTER_OPERATORS.bitwiseOr,
+    FILTER_OPERATORS.equals,
+    FILTER_OPERATORS.doesNotEqual,
+    FILTER_OPERATORS.or,
+    FILTER_OPERATORS.and
+];
 
-const STRING_FILTERS = ["==", "contains", "!=", "in", "not in", "begins with", "ends with"];
+const NUMBER_FILTERS = [
+    FILTER_OPERATORS.lessThan,
+    FILTER_OPERATORS.greaterThan,
+    FILTER_OPERATORS.equals,
+    FILTER_OPERATORS.lessThanOrEquals,
+    FILTER_OPERATORS.greaterThanOrEquals,
+    FILTER_OPERATORS.doesNotEqual,
+    FILTER_OPERATORS.isNull,
+    FILTER_OPERATORS.isNotNull
+]
 
-const DATETIME_FILTERS = ["<", ">", "==", "<=", ">=", "!="];
+const STRING_FILTERS = [
+    FILTER_OPERATORS.equals,
+    FILTER_OPERATORS.contains,
+    FILTER_OPERATORS.doesNotEqual,
+    FILTER_OPERATORS.isIn,
+    FILTER_OPERATORS.isNotIn,
+    FILTER_OPERATORS.beginsWith,
+    FILTER_OPERATORS.endsWith
+];
+
+const DATETIME_FILTERS = [
+    FILTER_OPERATORS.lessThan,
+    FILTER_OPERATORS.greaterThan,
+    FILTER_OPERATORS.equals,
+    FILTER_OPERATORS.lessThanOrEquals,
+    FILTER_OPERATORS.greaterThanOrEquals,
+    FILTER_OPERATORS.doesNotEqual
+];
 
 export const COLUMN_SEPARATOR_STRING = "|";
 
