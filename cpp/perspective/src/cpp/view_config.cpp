@@ -139,7 +139,7 @@ t_view_config::make_aggspecs(const t_schema& schema) {
             aggspecs.push_back(t_aggspec(column, agg_type, dependencies));
         }
 
-        m_aggregate_names.push_back(column);
+        m_aggregate_names.push_back(column); // FIXME: side effects should be avoided
     }
 
     // construct aggspecs for hidden sorts

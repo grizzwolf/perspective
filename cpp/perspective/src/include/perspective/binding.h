@@ -289,7 +289,22 @@ namespace binding {
      */
     template <typename T>
     std::tuple<std::string, std::string, std::vector<t_tscalar>> make_filter_term(
-        const t_schema& schema, T date_parser, std::vector<T> filter);
+        t_dtype type, T date_parser, std::vector<T> filter);
+
+    /**
+     * @brief For date/datetime values, is the filter term a valid date?
+     *
+     * Otherwise, make sure the filter term is not null/undefined
+     *
+     * @tparam T
+     * @param type
+     * @param date_parser
+     * @param filter
+     * @return true
+     * @return false
+     */
+    template <typename T>
+    bool is_valid_filter(t_dtype type, T date_parser, T filter_term);
 
     /**
      * @brief Extracts and validates the config from the binding language,
