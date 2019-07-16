@@ -136,6 +136,9 @@ public:
     // helper function for tests
     std::shared_ptr<t_data_table> tstep(std::shared_ptr<const t_data_table> input_table);
 
+    // helper function for JS interface
+    void promote_column(const std::string& name, t_dtype new_type);
+
     // Gnode will steal a reference to the context
     void register_context(const std::string& name, std::shared_ptr<t_ctx0> ctx);
     void register_context(const std::string& name, std::shared_ptr<t_ctx1> ctx);
