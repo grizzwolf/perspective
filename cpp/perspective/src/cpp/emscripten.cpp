@@ -232,6 +232,10 @@ namespace binding {
                     }
                     fvec.push_back(t_fterm(col, comp, mktscalar(0), terms));
                 } break;
+                case FILTER_OP_IS_NULL:
+                case FILTER_OP_IS_NOT_NULL: {
+                    fvec.push_back(t_fterm(col, comp, mktscalar(0), std::vector<t_tscalar>()));
+                } break;
                 default: {
                     t_tscalar term;
                     switch (col_type) {

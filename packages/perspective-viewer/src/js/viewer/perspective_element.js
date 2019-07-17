@@ -220,12 +220,14 @@ export class PerspectiveElement extends StateElement {
             const exclamation = node.shadowRoot.getElementById("row_exclamation");
             const {operator, operand} = JSON.parse(node.getAttribute("filter"));
             const filter = [node.getAttribute("name"), operator, operand];
-            if ((await this._table.is_valid_filter(filter)) && operand !== "") {
+            if (await this._table.is_valid_filter(filter)) {
+                console.log("valid filter " + filter)
                 filters.push(filter);
                 node.title = "";
                 operandNode.style.borderColor = "";
                 exclamation.hidden = true;
             } else {
+                console.log("INVALID filter " + filter)
                 node.title = "Invalid Filter";
                 operandNode.style.borderColor = "red";
                 exclamation.hidden = false;
