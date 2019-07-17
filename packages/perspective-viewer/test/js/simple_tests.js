@@ -93,4 +93,18 @@ exports.default = function(method = "capture") {
         await page.shadow_click("perspective-viewer", "#config_button");
         await drag_drop(page, "perspective-row[name=Category]", "#row_pivots");
     });
+
+    test[method]("user defined aggregates maintained on computed columns", async page => {
+        const viewer = await page.$("perspective-viewer");
+        await page.shadow_click("perspective-viewer", "#config_button");
+
+        await page.evaluate(element => {
+            element.restore({
+                aggregates: {Computed: "mean"},
+                "computed-columns": [{name: "Computed", inputs: ["Sales", "Profit"], func: "add"}],
+                columns: ["Computed", "Quantity"],
+                "row-pivots": ["Category"]
+            });
+        }, viewer);
+    });
 };

@@ -120,5 +120,13 @@
     "sunburst.html/highlights invalid filter.": "e48566c24b1655a202d1d227424f71c5",
     "sunburst.html/sorts by an alpha column.": "dca6a09d9b0c4b4a3fd6cdb91fa1eb1a",
     "sunburst.html/displays visible columns.": "92769650f8ccaf823d070f3bd12aa73b",
-    "__GIT_COMMIT__": "b35932f5217f9847c9684a980b6a50f675c9a8d2"
+    "__GIT_COMMIT__": "3ee9c7d54cf32dc46147cb1f9311b2b2e7fdb3fd",
+    "bar.html/user defined aggregates maintained on computed columns": "6f631e29f2fdbaa0c7794f7b02c82a79",
+    "bar-x.html/user defined aggregates maintained on computed columns": "5bb03cc1121949edd3b5dc47c42c4c68",
+    "bar-themed.html/user defined aggregates maintained on computed columns": "6d698189c8033760ec77b5ecc320582c",
+    "yscatter.html/user defined aggregates maintained on computed columns": "fde2fdf8c67eb26beb6dfc6203ad7a42",
+    "line.html/user defined aggregates maintained on computed columns": "372bc5af580ce6ebde935d92ee512c65",
+    "heatmap.html/user defined aggregates maintained on computed columns": "2cbcb742b458b0f4715e7cfde90aeca9",
+    "scatter.html/user defined aggregates maintained on computed columns": "348e660f40fe43f27e857138be975fa1",
+    "area.html/user defined aggregates maintained on computed columns": "9aec6bf3e9f3ccbbcd403049d77cd863"
 }

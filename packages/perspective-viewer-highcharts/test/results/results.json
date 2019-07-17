@@ -100,5 +100,10 @@
     "bar.html/perspective dispatches perspective-click event with one filter.": "32d64db28af46dfe77fad5cc1ca8af9c",
     "bar.html/perspective dispatches perspective-click event with filters.": "c18f49270244dfe4a6b32270ec30d99d",
     "bar.html/dates on the x-axis display correctly.": "591a1c8e9493451b6885b9651917ffff",
-    "__GIT_COMMIT__": "b35932f5217f9847c9684a980b6a50f675c9a8d2"
+    "__GIT_COMMIT__": "3ee9c7d54cf32dc46147cb1f9311b2b2e7fdb3fd",
+    "bar.html/user defined aggregates maintained on computed columns": "e4cda117995d55c018957fe6b747c3e9",
+    "line.html/user defined aggregates maintained on computed columns": "94c705562d59e968ea9e6d2d44e85999",
+    "scatter.html/user defined aggregates maintained on computed columns": "e72e8c25909180b985ced556af8fee6d",
+    "treemap.html/user defined aggregates maintained on computed columns": "ad440ad14b53b36f29e15b5862c45856",
+    "heatmap.html/user defined aggregates maintained on computed columns": "c48a266dd19687acb4224c187d97059f"
 }
