@@ -285,16 +285,6 @@ TEST(SCALAR, scalar_str)
     EXPECT_TRUE(mktscalar("a") == mktscalar("a"));
 }
 
-TEST(SCALAR, nan_test)
-{
-    EXPECT_TRUE(
-        mktscalar<double>(std::numeric_limits<double>::quiet_NaN())
-            .is_nan());
-    EXPECT_TRUE(
-        mktscalar<float>(std::numeric_limits<double>::quiet_NaN())
-            .is_nan());
-}
-
 TEST(SCALAR, difference)
 {
     EXPECT_EQ(
@@ -2014,18 +2004,6 @@ TEST_F(F64Ctx1SumNotNullTest, test_2) {
     t_testdata data{
         {
             {{iop, 1_ts, 1_ts, 1._ts}},
-            {"Grand Aggregate"_ts, 1._ts, 1_ts, 1._ts }
-        }
-    };
-
-    run(data);
-}
-
-TEST_F(F64Ctx1SumNotNullTest, test_3) {
-    t_testdata data{
-        {
-            {{iop, 1_ts, 1_ts, 1._ts},
-            {iop, 2_ts, 1_ts, s_nan64}},
             {"Grand Aggregate"_ts, 1._ts, 1_ts, 1._ts }
         }
     };

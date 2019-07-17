@@ -1085,12 +1085,6 @@ t_tscalar::cmp(t_filter_op op, const t_tscalar& other) const {
         case FILTER_OP_CONTAINS: {
             return value.contains(other);
         } break;
-        case FILTER_OP_IS_NAN: {
-            return std::isnan(to_double());
-        } break;
-        case FILTER_OP_IS_NOT_NAN: {
-            return !std::isnan(to_double());
-        } break;
         case FILTER_OP_IS_VALID: {
             return m_status == STATUS_VALID;
         } break;
@@ -1118,15 +1112,6 @@ t_tscalar::is_inplace() const {
 bool
 t_tscalar::can_store_inplace(const char* s) {
     return strlen(s) + 1 <= static_cast<size_t>(SCALAR_INPLACE_LEN);
-}
-
-bool
-t_tscalar::is_nan() const {
-    if (m_type == DTYPE_FLOAT64)
-        return std::isnan(get<double>());
-    if (m_type == DTYPE_FLOAT32)
-        return std::isnan(get<float>());
-    return false;
 }
 
 t_tscalar
