@@ -852,7 +852,6 @@ t_stree::gen_aggidx() {
 void
 t_stree::update_agg_table(t_uindex nidx, t_agg_update_info& info, t_uindex src_ridx,
     t_uindex dst_ridx, t_index nstrands, const t_gstate& gstate) {
-    static bool const enable_sticky_nan_fix = true;
     for (t_uindex idx : info.m_dst_topo_sorted) {
         const t_column* src = info.m_src[idx];
         t_column* dst = info.m_dst[idx];
@@ -868,16 +867,6 @@ t_stree::update_agg_table(t_uindex nidx, t_agg_update_info& info, t_uindex src_r
                 t_tscalar dst_scalar = dst->get_scalar(dst_ridx);
                 old_value.set(dst_scalar);
                 new_value.set(dst_scalar.add(src_scalar));
-                if (enable_sticky_nan_fix
-                    && old_value.is_nan()) // is_nan returns false for non-float types
-                {
-                    // if we previously had a NaN, add can't make it finite again; recalculate
-                    // entire sum in case it is now finite
-                    auto pkeys = get_pkeys(nidx);
-                    std::vector<double> values;
-                    gstate.read_column(spec.get_dependencies()[0].name(), pkeys, values);
-                    new_value.set(std::accumulate(values.begin(), values.end(), double(0)));
-                }
                 dst->set_scalar(dst_ridx, new_value);
             } break;
             case AGGTYPE_COUNT: {
@@ -926,8 +915,7 @@ t_stree::update_agg_table(t_uindex nidx, t_agg_update_info& info, t_uindex src_r
 
                 for (; weights_it != weights.end() && values_it != values.end();
                      ++weights_it, ++values_it) {
-                    if (weights_it->is_valid() && values_it->is_valid() && !weights_it->is_nan()
-                        && !values_it->is_nan()) {
+                    if (weights_it->is_valid() && values_it->is_valid()) {
                         nr += weights_it->to_double() * values_it->to_double();
                         dr += weights_it->to_double();
                     }
@@ -1160,11 +1148,11 @@ t_stree::update_agg_table(t_uindex nidx, t_agg_update_info& info, t_uindex src_r
                             t_tscalar rval;
                             rval.set(std::uint64_t(0));
                             rval.m_type = values[0].m_type;
+
                             for (const auto& v : values) {
-                                if (v.is_nan())
-                                    continue;
                                 rval = rval.add(v);
                             }
+
                             return rval;
                         }));
                 dst->set_scalar(dst_ridx, new_value);

@@ -141,78 +141,17 @@ to_double(const t_tscalar& c) {
     return c.to_double();
 }
 
-t_nancmp::t_nancmp()
-    : m_active(false)
-    , m_cmpval(CMP_OP_EQ) {}
+t_multisorter::t_multisorter(const std::vector<t_sorttype>& order)
+    : m_sort_order(order) {}
 
-t_nancmp
-nan_compare(t_sorttype order, const t_tscalar& a, const t_tscalar& b) {
-    t_nancmp rval;
-    bool a_fp = a.is_floating_point();
-    bool b_fp = b.is_floating_point();
-
-    if (!a_fp && !b_fp)
-        return rval;
-
-    double a_dbl = a.to_double();
-    double b_dbl = b.to_double();
-
-    bool a_nan = std::isnan(a_dbl);
-    bool b_nan = std::isnan(b_dbl);
-
-    rval.m_active = a_nan || b_nan;
-
-    if (!rval.m_active)
-        return rval;
-
-    if (a_nan && b_nan) {
-        rval.m_cmpval = CMP_OP_EQ;
-        return rval;
-    }
-
-    if (a_nan) {
-        switch (order) {
-            case SORTTYPE_NONE:
-            case SORTTYPE_ASCENDING:
-            case SORTTYPE_ASCENDING_ABS: {
-                rval.m_cmpval = CMP_OP_LT;
-            } break;
-            case SORTTYPE_DESCENDING_ABS:
-            case SORTTYPE_DESCENDING: {
-                rval.m_cmpval = CMP_OP_GT;
-            } break;
-        }
-        return rval;
-    }
-
-    switch (order) {
-        case SORTTYPE_NONE:
-        case SORTTYPE_ASCENDING:
-        case SORTTYPE_ASCENDING_ABS: {
-            rval.m_cmpval = CMP_OP_GT;
-        } break;
-        case SORTTYPE_DESCENDING_ABS:
-        case SORTTYPE_DESCENDING: {
-            rval.m_cmpval = CMP_OP_LT;
-        } break;
-    }
-
-    return rval;
-}
-
-t_multisorter::t_multisorter(const std::vector<t_sorttype>& order, bool handle_nans)
+t_multisorter::t_multisorter(
+    std::shared_ptr<const std::vector<t_mselem>> elems, const std::vector<t_sorttype>& order)
     : m_sort_order(order)
-    , m_handle_nans(handle_nans) {}
-
-t_multisorter::t_multisorter(std::shared_ptr<const std::vector<t_mselem>> elems,
-    const std::vector<t_sorttype>& order, bool handle_nans)
-    : m_sort_order(order)
-    , m_elems(elems)
-    , m_handle_nans(handle_nans) {}
+    , m_elems(elems) {}
 
 bool
 t_multisorter::operator()(const t_mselem& a, const t_mselem& b) const {
-    return cmp_mselem(a, b, m_sort_order, m_handle_nans);
+    return cmp_mselem(a, b, m_sort_order);
 }
 
 bool
